@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.pnpm-home/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Test / coverage
+coverage/
+.vitest/
+
+# Foundry
+out/
+cache/
+broadcast/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Env
+.env
+.env.local
