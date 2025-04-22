@@ -1,0 +1,8 @@
+{
+  "name": "evmtrace",
+  "version": "0.0.0",
+  "description": "EVM transaction tracer and gas profiler",
+  "license": "MIT",
+  "author": "Chris Sun",
+  "type": "module"
+}
