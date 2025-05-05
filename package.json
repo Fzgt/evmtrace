@@ -10,12 +10,17 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{ts,js,mjs,cjs,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,js,mjs,cjs,json,md,yml,yaml}\""
   },
   "devDependencies": {
+    "@eslint/js": "^9.15.0",
     "@types/node": "^22.10.0",
+    "eslint": "^9.15.0",
     "prettier": "^3.4.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.16.0"
   }
 }
