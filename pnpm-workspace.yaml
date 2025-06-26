@@ -1,0 +1,7 @@
+# pnpm settings (single-package repo, no workspace members).
+# esbuild ships a prebuilt binary; allow its install script to run.
+allowBuilds:
+  esbuild: true
+
+# Explicit `pnpm install` runs in CI; don't re-check deps on every `pnpm run`.
+verifyDepsBeforeRun: false
