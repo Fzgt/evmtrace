@@ -1,3 +1,5 @@
+import { toFunctionSelector } from 'viem';
+
 import type { Hex } from '../hex';
 
 /** A known 4-byte selector and the signature it resolves to. */
@@ -38,4 +40,14 @@ export class SelectorRegistry {
   get size(): number {
     return this.entries.size;
   }
+}
+
+/**
+ * Compute the 4-byte selector of a function signature.
+ *
+ * @example
+ * computeSelector('transfer(address,uint256)'); // '0xa9059cbb'
+ */
+export function computeSelector(signature: string): Hex {
+  return toFunctionSelector(signature);
 }
