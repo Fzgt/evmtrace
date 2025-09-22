@@ -1,4 +1,4 @@
-import { toFunctionSelector } from 'viem';
+import { toFunctionSelector, toFunctionSignature, type Abi } from 'viem';
 
 import type { Hex } from '../hex';
 
@@ -39,6 +39,25 @@ export class SelectorRegistry {
   /** Number of registered selectors. */
   get size(): number {
     return this.entries.size;
+  }
+
+  /** Register every function in an ABI. */
+  addAbi(abi: Abi): void {
+    for (const item of abi) {
+      if (item.type !== 'function') continue;
+      this.add({
+        selector: toFunctionSelector(item),
+        signature: toFunctionSignature(item),
+        name: item.name,
+      });
+    }
+  }
+
+  /** Build a registry pre-seeded from one or more ABIs. */
+  static fromAbi(...abis: Abi[]): SelectorRegistry {
+    const registry = new SelectorRegistry();
+    for (const abi of abis) registry.addAbi(abi);
+    return registry;
   }
 }
 
