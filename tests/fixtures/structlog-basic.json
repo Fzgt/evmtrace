@@ -1,0 +1,21 @@
+{
+  "gas": 24221,
+  "failed": false,
+  "returnValue": "",
+  "structLogs": [
+    { "pc": 0, "op": "PUSH1", "gas": 100000, "gasCost": 3, "depth": 1, "stack": [] },
+    { "pc": 2, "op": "PUSH1", "gas": 99997, "gasCost": 3, "depth": 1, "stack": ["0x80"] },
+    { "pc": 4, "op": "MSTORE", "gas": 99994, "gasCost": 12, "depth": 1, "stack": ["0x80", "0x40"] },
+    { "pc": 5, "op": "SLOAD", "gas": 99982, "gasCost": 2100, "depth": 1, "stack": ["0x0"] },
+    { "pc": 6, "op": "PUSH1", "gas": 97882, "gasCost": 3, "depth": 1, "stack": ["0x2a"] },
+    {
+      "pc": 8,
+      "op": "SSTORE",
+      "gas": 97879,
+      "gasCost": 22100,
+      "depth": 1,
+      "stack": ["0x2a", "0x0"]
+    },
+    { "pc": 9, "op": "STOP", "gas": 75779, "gasCost": 0, "depth": 1, "stack": [] }
+  ]
+}
