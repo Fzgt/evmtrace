@@ -14,7 +14,11 @@ describe('computeSelector', () => {
 describe('SelectorRegistry', () => {
   it('stores and retrieves entries case-insensitively', () => {
     const registry = new SelectorRegistry();
-    registry.add({ selector: '0xA9059CBB', signature: 'transfer(address,uint256)', name: 'transfer' });
+    registry.add({
+      selector: '0xA9059CBB',
+      signature: 'transfer(address,uint256)',
+      name: 'transfer',
+    });
     expect(registry.has('0xa9059cbb')).toBe(true);
     expect(registry.get('0xa9059cbb')?.name).toBe('transfer');
     expect(registry.size).toBe(1);
