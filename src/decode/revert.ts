@@ -1,4 +1,4 @@
-import { decodeAbiParameters } from 'viem';
+import { decodeAbiParameters, decodeErrorResult, type Abi } from 'viem';
 
 import { getSelector, type Hex } from '../hex';
 
@@ -38,12 +38,22 @@ function toPanicKey(code: bigint): string {
   return `0x${code.toString(16).padStart(2, '0')}`;
 }
 
+function formatArg(value: unknown): string {
+  return typeof value === 'bigint' ? value.toString() : String(value);
+}
+
+/** Options controlling revert decoding. */
+export interface DecodeRevertOptions {
+  /** ABI(s) whose custom `error` definitions should be matched. */
+  abi?: Abi;
+}
+
 /**
  * Decode revert data emitted by a failed call. Recognises the built-in
- * `Error(string)` and `Panic(uint256)` payloads; everything else is reported as
- * `Unknown` until an ABI is supplied.
+ * `Error(string)` and `Panic(uint256)` payloads, and — when an ABI is supplied —
+ * any custom `error` it declares. Anything else is reported as `Unknown`.
  */
-export function decodeRevert(data: Hex): RevertReason {
+export function decodeRevert(data: Hex, options: DecodeRevertOptions = {}): RevertReason {
   if (!data || data === '0x') {
     return { kind: 'Empty', message: 'reverted without a reason' };
   }
@@ -71,6 +81,22 @@ export function decodeRevert(data: Hex): RevertReason {
       };
     } catch {
       /* not a well-formed Panic(uint256); fall through */
+    }
+  }
+
+  if (options.abi) {
+    try {
+      const decoded = decodeErrorResult({ abi: options.abi, data });
+      const args = decoded.args ?? [];
+      return {
+        kind: 'Custom',
+        name: decoded.errorName,
+        selector,
+        args,
+        message: `${decoded.errorName}(${args.map(formatArg).join(', ')})`,
+      };
+    } catch {
+      /* not a known custom error; fall through */
     }
   }
 
