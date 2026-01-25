@@ -6,11 +6,10 @@ import { Command } from 'commander';
 import type { Abi } from 'viem';
 
 import type { Hex } from '../hex';
-import { foldStacks } from '../render/flamegraph';
-import { formatReport } from '../render/report';
 import { traceTransaction, type TraceOptions } from '../tracer';
 import type { TraceResult } from '../types';
 import { VERSION } from '../index';
+import { renderResult } from './format';
 
 type TraceFn = (txHash: Hex, options: TraceOptions) => Promise<TraceResult>;
 
@@ -59,11 +58,7 @@ export function buildProgram(deps: CliDeps = {}): Command {
         abis,
         structLogs: options.structLogs,
       });
-      write(
-        options.flamegraph
-          ? foldStacks(result.root)
-          : formatReport(result, { color: options.color }),
-      );
+      write(renderResult(result, { flamegraph: options.flamegraph, color: options.color }));
     });
 
   return program;
