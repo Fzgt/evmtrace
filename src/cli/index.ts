@@ -9,7 +9,7 @@ import type { Hex } from '../hex';
 import { traceTransaction, type TraceOptions } from '../tracer';
 import type { TraceResult } from '../types';
 import { VERSION } from '../index';
-import { renderResult } from './format';
+import { renderResult, serializeResult } from './format';
 
 type TraceFn = (txHash: Hex, options: TraceOptions) => Promise<TraceResult>;
 
@@ -26,6 +26,7 @@ interface TraceCommandOptions {
   abi: string[];
   structLogs: boolean;
   flamegraph: boolean;
+  json: boolean;
   color: boolean;
 }
 
@@ -50,6 +51,7 @@ export function buildProgram(deps: CliDeps = {}): Command {
     .option('-a, --abi <path...>', 'ABI JSON file(s) used to decode calls', [])
     .option('-s, --struct-logs', 'also profile opcodes and storage via struct logs', false)
     .option('--flamegraph', 'print folded flamegraph stacks instead of a report', false)
+    .option('--json', 'output raw JSON instead of a text report', false)
     .option('--no-color', 'disable ANSI colours')
     .action(async (txHash: string, options: TraceCommandOptions) => {
       const abis = options.abi.map(readAbiFile);
@@ -58,6 +60,10 @@ export function buildProgram(deps: CliDeps = {}): Command {
         abis,
         structLogs: options.structLogs,
       });
+      if (options.json) {
+        write(serializeResult(result));
+        return;
+      }
       write(renderResult(result, { flamegraph: options.flamegraph, color: options.color }));
     });
 
