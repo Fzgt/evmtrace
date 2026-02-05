@@ -47,3 +47,16 @@ export function buildCallTree(frame: RawCallFrame, depth = 0): CallNode {
 
   return node;
 }
+
+/** Visit every node in a call tree in pre-order (parents before children). */
+export function walkCallTree(root: CallNode, visit: (node: CallNode) => void): void {
+  visit(root);
+  for (const child of root.calls) walkCallTree(child, visit);
+}
+
+/** Flatten a call tree into a pre-order list of its nodes. */
+export function flattenCalls(root: CallNode): CallNode[] {
+  const nodes: CallNode[] = [];
+  walkCallTree(root, (node) => nodes.push(node));
+  return nodes;
+}
