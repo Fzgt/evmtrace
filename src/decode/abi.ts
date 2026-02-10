@@ -2,6 +2,7 @@ import { decodeFunctionData, toFunctionSignature, type Abi, type AbiFunction } f
 
 import { getSelector, type Hex } from '../hex';
 import type { DecodedArg } from '../types';
+import type { SelectorEntry, SelectorRegistry } from './selectors';
 
 /** A calldata payload matched against an ABI. */
 export interface DecodedCall {
@@ -46,4 +47,16 @@ export function decodeCallData(input: Hex, abi: Abi): DecodedCall | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Resolve a call's function name from a {@link SelectorRegistry} without
+ * decoding its arguments — handy when only a signature database is available.
+ */
+export function resolveSelectorName(
+  input: Hex,
+  registry: SelectorRegistry,
+): SelectorEntry | undefined {
+  const selector = getSelector(input);
+  return selector ? registry.get(selector) : undefined;
 }
