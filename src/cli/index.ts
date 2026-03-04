@@ -1,20 +1,71 @@
 #!/usr/bin/env node
+import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 import { Command } from 'commander';
+import type { Abi } from 'viem';
 
+import type { Hex } from '../hex';
+import { foldStacks } from '../render/flamegraph';
+import { formatReport } from '../render/report';
+import { traceTransaction, type TraceOptions } from '../tracer';
+import type { TraceResult } from '../types';
 import { VERSION } from '../index';
+
+type TraceFn = (txHash: Hex, options: TraceOptions) => Promise<TraceResult>;
 
 /** Injectable dependencies, so the program can be driven in tests. */
 export interface CliDeps {
+  trace?: TraceFn;
+  readAbiFile?: (path: string) => Abi;
   write?: (text: string) => void;
   writeError?: (text: string) => void;
 }
 
+interface TraceCommandOptions {
+  rpc: string;
+  abi: string[];
+  structLogs: boolean;
+  flamegraph: boolean;
+  color: boolean;
+}
+
+function defaultReadAbiFile(path: string): Abi {
+  return JSON.parse(readFileSync(path, 'utf8')) as Abi;
+}
+
 /** Build the root `evmtrace` command. */
-export function buildProgram(_deps: CliDeps = {}): Command {
+export function buildProgram(deps: CliDeps = {}): Command {
+  const trace = deps.trace ?? traceTransaction;
+  const readAbiFile = deps.readAbiFile ?? defaultReadAbiFile;
+  const write = deps.write ?? ((text: string) => process.stdout.write(`${text}\n`));
+
   const program = new Command();
   program.name('evmtrace').description('Trace and gas-profile EVM transactions').version(VERSION);
+
+  program
+    .command('trace')
+    .description('Trace a transaction and print where the gas went')
+    .argument('<txHash>', 'transaction hash to trace')
+    .requiredOption('-r, --rpc <url>', 'JSON-RPC endpoint exposing debug_traceTransaction')
+    .option('-a, --abi <path...>', 'ABI JSON file(s) used to decode calls', [])
+    .option('-s, --struct-logs', 'also profile opcodes and storage via struct logs', false)
+    .option('--flamegraph', 'print folded flamegraph stacks instead of a report', false)
+    .option('--no-color', 'disable ANSI colours')
+    .action(async (txHash: string, options: TraceCommandOptions) => {
+      const abis = options.abi.map(readAbiFile);
+      const result = await trace(txHash as Hex, {
+        rpcUrl: options.rpc,
+        abis,
+        structLogs: options.structLogs,
+      });
+      write(
+        options.flamegraph
+          ? foldStacks(result.root)
+          : formatReport(result, { color: options.color }),
+      );
+    });
+
   return program;
 }
 
