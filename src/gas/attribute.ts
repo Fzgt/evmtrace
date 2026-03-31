@@ -6,7 +6,10 @@ import type { CallNode } from '../types';
  */
 export function attributeGas(root: CallNode): CallNode {
   const childGas = root.calls.reduce((sum, child) => sum + child.gasUsed, 0n);
-  root.gasSelf = root.gasUsed - childGas;
+  const self = root.gasUsed - childGas;
+  // Some tracers report a parent whose children sum to more than its own
+  // gasUsed (e.g. reordered or synthetic frames); never report negative self.
+  root.gasSelf = self < 0n ? 0n : self;
   for (const child of root.calls) {
     attributeGas(child);
   }

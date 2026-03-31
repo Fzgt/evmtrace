@@ -18,4 +18,33 @@ describe('attributeGas', () => {
     expect(child.gasSelf).toBe(child.gasUsed);
     expect(child.gasSelf).toBe(2500n);
   });
+
+  it('clamps negative self gas to zero', () => {
+    const root = attributeGas({
+      type: 'CALL',
+      from: '0x0000000000000000000000000000000000000001',
+      to: '0x0000000000000000000000000000000000000002',
+      value: 0n,
+      gas: 100n,
+      gasUsed: 100n,
+      input: '0x',
+      output: '0x',
+      depth: 0,
+      calls: [
+        {
+          type: 'CALL',
+          from: '0x0000000000000000000000000000000000000002',
+          to: '0x0000000000000000000000000000000000000003',
+          value: 0n,
+          gas: 100n,
+          gasUsed: 150n,
+          input: '0x',
+          output: '0x',
+          depth: 1,
+          calls: [],
+        },
+      ],
+    });
+    expect(root.gasSelf).toBe(0n);
+  });
 });
