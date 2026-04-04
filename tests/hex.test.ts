@@ -8,6 +8,7 @@ import {
   shortHex,
   toBigInt,
   wordToAddress,
+  wordToBigInt,
 } from '../src/hex';
 
 describe('isHex', () => {
@@ -73,6 +74,14 @@ describe('wordToAddress', () => {
   it('takes the low twenty bytes', () => {
     const word = '000000000000000000000000abcdef0123456789abcdef0123456789abcdef01';
     expect(wordToAddress(word)).toBe('0xabcdef0123456789abcdef0123456789abcdef01');
+  });
+});
+
+describe('wordToBigInt', () => {
+  it('parses words with or without a prefix', () => {
+    expect(wordToBigInt('0x0a')).toBe(10n);
+    const word = '0000000000000000000000000000000000000000000000000000000000000010';
+    expect(wordToBigInt(word)).toBe(16n);
   });
 });
 

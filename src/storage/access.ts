@@ -1,12 +1,11 @@
-import { toBigInt, wordToAddress, type Address, type Hex } from '../hex';
+import { wordToAddress, wordToBigInt, type Address, type Hex } from '../hex';
 import { CALL_OPCODES } from '../gas/opcodes';
 import type { StructLogTrace } from '../trace/structLog';
 import type { StorageAccess } from '../types';
 
 function normalizeWord(word: string | undefined): Hex | null {
   if (word === undefined) return null;
-  const prefixed = word.startsWith('0x') ? word : `0x${word}`;
-  return `0x${toBigInt(prefixed).toString(16)}`;
+  return `0x${wordToBigInt(word).toString(16)}`;
 }
 
 /**

@@ -1,4 +1,4 @@
-import { toBigInt, wordToAddress, type Address } from '../hex';
+import { wordToAddress, wordToBigInt, type Address } from '../hex';
 import { CALL_OPCODES, CREATE_OPCODES } from '../gas/opcodes';
 import type { CallNode, CallType } from '../types';
 import type { StructLog, StructLogTrace } from './structLog';
@@ -37,7 +37,7 @@ function readCallArgs(op: string, stack: string[] | undefined): PendingCall {
   if (!stack || stack.length < 2) return { type, to: null, gas: 0n };
   const gasWord = stack[stack.length - 1]!;
   const toWord = stack[stack.length - 2]!;
-  const gas = toBigInt(gasWord.startsWith('0x') ? gasWord : `0x${gasWord}`);
+  const gas = wordToBigInt(gasWord);
   const to = CREATE_OPCODES.has(type) ? null : wordToAddress(toWord);
   return { type, to, gas };
 }
