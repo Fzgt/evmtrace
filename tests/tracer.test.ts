@@ -7,9 +7,15 @@ import type { RawCallFrame } from '../src/trace/callTracer';
 import type { StructLogTrace } from '../src/trace/structLog';
 import simpleTransfer from './fixtures/simple-transfer.json';
 import structlog from './fixtures/structlog-basic.json';
+import revertCustom from './fixtures/revert-custom-error.json';
 
 const abi = parseAbi(['function transfer(address to, uint256 amount) returns (bool)']);
 const frame = simpleTransfer as unknown as RawCallFrame;
+
+const reverterAbi = parseAbi([
+  'function customRevert(uint256 available, uint256 required)',
+  'error InsufficientBalance(uint256 available, uint256 required)',
+]);
 
 describe('analyzeCallFrame', () => {
   it('decodes the root call', () => {
@@ -48,5 +54,16 @@ describe('traceTransaction', () => {
 
   it('throws when neither a client nor an rpcUrl is given', async () => {
     await expect(traceTransaction('0xabc', {})).rejects.toThrow(/client.*rpcUrl/);
+  });
+});
+
+describe('reverted traces', () => {
+  it('marks the trace failed and decodes the custom error', () => {
+    const result = analyzeCallFrame(revertCustom as unknown as RawCallFrame, {
+      abis: [reverterAbi],
+    });
+    expect(result.failed).toBe(true);
+    expect(result.root.functionName).toBe('customRevert');
+    expect(result.root.revertReason).toContain('InsufficientBalance(5, 10)');
   });
 });
