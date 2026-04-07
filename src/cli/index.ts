@@ -6,6 +6,7 @@ import { Command } from 'commander';
 import type { Abi } from 'viem';
 
 import type { Hex } from '../hex';
+import { EvmTraceError } from '../errors';
 import { traceTransaction, type TraceOptions } from '../tracer';
 import type { TraceResult } from '../types';
 import { VERSION } from '../index';
@@ -31,7 +32,13 @@ interface TraceCommandOptions {
 }
 
 function defaultReadAbiFile(path: string): Abi {
-  return JSON.parse(readFileSync(path, 'utf8')) as Abi;
+  const parsed = JSON.parse(readFileSync(path, 'utf8')) as unknown;
+  // Accept a bare ABI array or a Hardhat/Foundry artifact with an `abi` field.
+  if (Array.isArray(parsed)) return parsed as Abi;
+  if (parsed && typeof parsed === 'object' && Array.isArray((parsed as { abi?: unknown }).abi)) {
+    return (parsed as { abi: Abi }).abi;
+  }
+  throw new EvmTraceError(`${path} is not an ABI array or an artifact with an "abi" field`);
 }
 
 /** Build the root `evmtrace` command. */
