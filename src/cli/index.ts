@@ -46,6 +46,7 @@ export function buildProgram(deps: CliDeps = {}): Command {
   const trace = deps.trace ?? traceTransaction;
   const readAbiFile = deps.readAbiFile ?? defaultReadAbiFile;
   const write = deps.write ?? ((text: string) => process.stdout.write(`${text}\n`));
+  const writeError = deps.writeError ?? ((text: string) => process.stderr.write(`${text}\n`));
 
   const program = new Command();
   program.name('evmtrace').description('Trace and gas-profile EVM transactions').version(VERSION);
@@ -61,17 +62,22 @@ export function buildProgram(deps: CliDeps = {}): Command {
     .option('--json', 'output raw JSON instead of a text report', false)
     .option('--no-color', 'disable ANSI colours')
     .action(async (txHash: string, options: TraceCommandOptions) => {
-      const abis = options.abi.map(readAbiFile);
-      const result = await trace(txHash as Hex, {
-        rpcUrl: options.rpc,
-        abis,
-        structLogs: options.structLogs,
-      });
-      if (options.json) {
-        write(serializeResult(result));
-        return;
+      try {
+        const abis = options.abi.map(readAbiFile);
+        const result = await trace(txHash as Hex, {
+          rpcUrl: options.rpc,
+          abis,
+          structLogs: options.structLogs,
+        });
+        if (options.json) {
+          write(serializeResult(result));
+          return;
+        }
+        write(renderResult(result, { flamegraph: options.flamegraph, color: options.color }));
+      } catch (error) {
+        writeError(`evmtrace: ${error instanceof Error ? error.message : String(error)}`);
+        process.exitCode = 1;
       }
-      write(renderResult(result, { flamegraph: options.flamegraph, color: options.color }));
     });
 
   return program;

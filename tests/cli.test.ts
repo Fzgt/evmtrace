@@ -74,4 +74,22 @@ describe('cli trace', () => {
     expect(readFiles).toEqual(['a.json', 'b.json']);
     expect(received?.abis).toHaveLength(2);
   });
+
+  it('reports failures on stderr and sets a non-zero exit code', async () => {
+    const errors: string[] = [];
+    const previous = process.exitCode;
+    try {
+      await run(['node', 'evmtrace', 'trace', '0xabc', '--rpc', 'http://x'], {
+        trace: async () => {
+          throw new Error('boom');
+        },
+        write: () => {},
+        writeError: (text) => errors.push(text),
+      });
+      expect(process.exitCode).toBe(1);
+      expect(errors.join('\n')).toContain('boom');
+    } finally {
+      process.exitCode = previous;
+    }
+  });
 });
