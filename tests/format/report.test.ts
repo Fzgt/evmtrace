@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { attributeGas } from '../../src/gas/attribute';
 import { buildOpcodeProfile } from '../../src/gas/opcodeProfile';
-import { formatReport } from '../../src/render/report';
+import { formatReport } from '../../src/format/report';
 import { buildCallTree } from '../../src/trace/buildTree';
 import type { RawCallFrame } from '../../src/trace/callTracer';
 import type { StructLogTrace } from '../../src/trace/structLog';
