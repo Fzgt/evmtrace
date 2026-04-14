@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildCallTree, normalizeCallType } from '../../src/trace/buildTree';
+import { buildCallTree, flattenCalls, normalizeCallType } from '../../src/trace/buildTree';
 import type { RawCallFrame } from '../../src/trace/callTracer';
+import { attributeGas } from '../../src/gas/attribute';
 import simpleTransfer from '../fixtures/simple-transfer.json';
+import delegatecallProxy from '../fixtures/delegatecall-proxy.json';
 
 const frame = simpleTransfer as unknown as RawCallFrame;
 
@@ -41,5 +43,25 @@ describe('buildCallTree', () => {
     expect(child.gasUsed).toBe(2500n);
     expect(child.depth).toBe(1);
     expect(child.calls).toHaveLength(0);
+  });
+});
+
+describe('buildCallTree with a delegatecall proxy', () => {
+  const root = attributeGas(buildCallTree(delegatecallProxy as unknown as RawCallFrame));
+
+  it('preserves the delegatecall frame and its target', () => {
+    const child = root.calls[0]!;
+    expect(child.type).toBe('DELEGATECALL');
+    expect(child.to).toBe('0x2222222222222222222222222222222222222222');
+    expect(child.from).toBe('0x1111111111111111111111111111111111111111');
+  });
+
+  it('attributes self gas above the delegatecall', () => {
+    // 30000 used total, 20000 in the delegatecall => 10000 self.
+    expect(root.gasSelf).toBe(10000n);
+  });
+
+  it('flattens to a pre-order node list', () => {
+    expect(flattenCalls(root)).toHaveLength(2);
   });
 });
