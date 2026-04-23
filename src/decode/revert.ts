@@ -53,7 +53,10 @@ export interface DecodeRevertOptions {
  * `Error(string)` and `Panic(uint256)` payloads, and — when an ABI is supplied —
  * any custom `error` it declares. Anything else is reported as `Unknown`.
  */
-export function decodeRevert(data: Hex, options: DecodeRevertOptions = {}): RevertReason {
+export function decodeRevert(
+  data: Hex | undefined,
+  options: DecodeRevertOptions = {},
+): RevertReason {
   if (!data || data === '0x') {
     return { kind: 'Empty', message: 'reverted without a reason' };
   }
