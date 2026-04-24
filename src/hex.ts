@@ -49,6 +49,11 @@ export function getSelector(input: Hex): Hex | null {
   return input.slice(0, 10).toLowerCase() as Hex;
 }
 
+/** Parse a 32-byte EVM stack word (with or without a `0x` prefix) to a bigint. */
+export function wordToBigInt(word: string): bigint {
+  return toBigInt(word.startsWith('0x') ? word : `0x${word}`);
+}
+
 /** Count the bytes represented by a hex string, ignoring the `0x` prefix. */
 export function byteLength(hex: Hex): number {
   return Math.max(0, Math.floor((hex.length - 2) / 2));

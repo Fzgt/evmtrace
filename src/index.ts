@@ -8,7 +8,7 @@ export const VERSION = '0.0.0';
 
 // ---- primitives ----
 export type { Address, Hex } from './hex';
-export { asHex, byteLength, getSelector, isHex, shortHex, toBigInt, wordToAddress } from './hex';
+export { asHex, byteLength, getSelector, isHex, shortHex, toBigInt, wordToAddress, wordToBigInt } from './hex';
 export { DecodeError, EvmTraceError, RpcError, TraceNotFoundError } from './errors';
 export type {
   CallNode,
