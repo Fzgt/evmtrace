@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildOpcodeProfile } from '../../src/gas/opcodeProfile';
+import { buildOpcodeProfile, summarizeByCategory } from '../../src/gas/opcodeProfile';
 import type { StructLogTrace } from '../../src/trace/structLog';
 import structlog from '../fixtures/structlog-basic.json';
 
@@ -32,5 +32,19 @@ describe('buildOpcodeProfile', () => {
 
   it('records the most expensive opcode first', () => {
     expect(profile.byOpcode[0]).toEqual({ op: 'SSTORE', count: 1, gas: 22100n });
+  });
+});
+
+describe('summarizeByCategory', () => {
+  const categories = summarizeByCategory(buildOpcodeProfile(trace));
+  const find = (category: string) => categories.find((c) => c.category === category);
+
+  it('rolls storage opcodes together', () => {
+    // SSTORE 22100 + SLOAD 2100 = 24200 across 2 opcodes
+    expect(find('storage')).toEqual({ category: 'storage', gas: 24200n, count: 2 });
+  });
+
+  it('orders categories by gas descending', () => {
+    expect(categories[0]!.category).toBe('storage');
   });
 });
