@@ -1,5 +1,5 @@
-import { foldStacks } from '../render/flamegraph';
-import { formatReport } from '../render/report';
+import { foldStacks } from '../format/flamegraph';
+import { formatReport } from '../format/report';
 import type { TraceResult } from '../types';
 
 /** `JSON.stringify` replacer that serialises bigints as decimal strings. */

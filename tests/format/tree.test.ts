@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { attributeGas } from '../../src/gas/attribute';
-import { formatGas, renderCallTree } from '../../src/render/tree';
+import { formatGas, renderCallTree } from '../../src/format/tree';
 import { buildCallTree } from '../../src/trace/buildTree';
 import type { RawCallFrame } from '../../src/trace/callTracer';
 import simpleTransfer from '../fixtures/simple-transfer.json';

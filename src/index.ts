@@ -50,12 +50,12 @@ export { FourByteClient } from './decode/fourbyte';
 export { extractStorageAccesses } from './storage/access';
 
 // ---- rendering ----
-export type { RenderOptions } from './render/tree';
-export { formatGas, renderCallTree } from './render/tree';
-export type { FlamegraphOptions } from './render/flamegraph';
-export { foldStacks, renderFlamegraph } from './render/flamegraph';
-export type { ReportOptions } from './render/report';
-export { formatReport } from './render/report';
+export type { RenderOptions } from './format/tree';
+export { formatGas, renderCallTree } from './format/tree';
+export type { FlamegraphOptions } from './format/flamegraph';
+export { foldStacks, renderFlamegraph } from './format/flamegraph';
+export type { ReportOptions } from './format/report';
+export { formatReport } from './format/report';
 
 // ---- rpc + orchestration ----
 export type { TraceClient, TraceClientOptions } from './rpc/client';
