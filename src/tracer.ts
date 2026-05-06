@@ -52,6 +52,11 @@ export function decodeCallTree(root: CallNode, abi: Abi, registry: SelectorRegis
   visit(root);
 }
 
+/** Flatten several ABIs into one, as viem's decoders expect a single ABI. */
+function mergeAbis(abis: Abi[]): Abi {
+  return abis.flat() as Abi;
+}
+
 /**
  * Turn a raw `callTracer` frame into a fully decoded {@link TraceResult}: build
  * the tree, attribute gas, decode calls and reverts, and — when struct logs are
@@ -59,7 +64,7 @@ export function decodeCallTree(root: CallNode, abi: Abi, registry: SelectorRegis
  */
 export function analyzeCallFrame(frame: RawCallFrame, options: AnalyzeOptions = {}): TraceResult {
   const abis = options.abis ?? [];
-  const abi = abis.flat() as Abi;
+  const abi = mergeAbis(abis);
   const registry = SelectorRegistry.fromAbi(...abis);
 
   const root = attributeGas(buildCallTree(frame));
