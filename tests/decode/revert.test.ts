@@ -26,6 +26,7 @@ describe('decodeRevert', () => {
 
   it('reports an empty revert', () => {
     expect(decodeRevert('0x').kind).toBe('Empty');
+    expect(decodeRevert(undefined).kind).toBe('Empty');
   });
 
   it('reports an unknown selector', () => {
