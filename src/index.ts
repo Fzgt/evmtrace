@@ -34,7 +34,8 @@ export type { OpcodeCategory } from './gas/opcodes';
 export { CALL_OPCODES, CREATE_OPCODES, opcodeCategory, STORAGE_OPCODES } from './gas/opcodes';
 export { ACCESS_COST, GAS_TIER, staticGasCost } from './gas/costs';
 export { attributeGas } from './gas/attribute';
-export { buildOpcodeProfile } from './gas/opcodeProfile';
+export type { CategoryGasEntry } from './gas/opcodeProfile';
+export { buildOpcodeProfile, summarizeByCategory } from './gas/opcodeProfile';
 
 // ---- decode ----
 export type { SelectorEntry } from './decode/selectors';

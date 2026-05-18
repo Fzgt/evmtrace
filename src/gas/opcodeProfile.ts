@@ -1,5 +1,6 @@
 import type { OpcodeGasEntry, OpcodeGasProfile } from '../types';
 import type { StructLogTrace } from '../trace/structLog';
+import { opcodeCategory, type OpcodeCategory } from './opcodes';
 
 /**
  * Aggregate a struct-log trace into a per-opcode gas breakdown. Each step's
@@ -28,4 +29,32 @@ export function buildOpcodeProfile(trace: StructLogTrace): OpcodeGasProfile {
     });
 
   return { total, byOpcode };
+}
+
+/** Gas and opcode count rolled up into one opcode family. */
+export interface CategoryGasEntry {
+  category: OpcodeCategory;
+  gas: bigint;
+  count: number;
+}
+
+/**
+ * Roll an opcode profile up into coarse families (storage, memory, call, …),
+ * sorted from most to least gas. Handy for a one-line "where did it go" summary.
+ */
+export function summarizeByCategory(profile: OpcodeGasProfile): CategoryGasEntry[] {
+  const acc = new Map<OpcodeCategory, { gas: bigint; count: number }>();
+  for (const entry of profile.byOpcode) {
+    const category = opcodeCategory(entry.op);
+    const current = acc.get(category) ?? { gas: 0n, count: 0 };
+    current.gas += entry.gas;
+    current.count += entry.count;
+    acc.set(category, current);
+  }
+  return [...acc.entries()]
+    .map(([category, value]) => ({ category, gas: value.gas, count: value.count }))
+    .sort((a, b) => {
+      if (a.gas !== b.gas) return a.gas > b.gas ? -1 : 1;
+      return a.category.localeCompare(b.category);
+    });
 }
