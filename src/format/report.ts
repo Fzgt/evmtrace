@@ -31,9 +31,9 @@ export function formatReport(result: TraceResult, options: ReportOptions = {}): 
     sections.push('Gas by opcode');
     const max = options.maxOpcodes ?? 10;
     for (const entry of profile.byOpcode.slice(0, max)) {
-      sections.push(
-        `  ${entry.op.padEnd(14)}${formatGas(entry.gas).padStart(12)}  x${entry.count}`,
-      );
+      const op = entry.op.padEnd(12);
+      const gas = formatGas(entry.gas).padStart(12);
+      sections.push(`  ${op}${gas}   ×${entry.count}`);
     }
   }
 
