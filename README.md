@@ -1,5 +1,9 @@
 # evmtrace
 
+[![CI](https://github.com/Fzgt/evmtrace/actions/workflows/ci.yml/badge.svg)](https://github.com/Fzgt/evmtrace/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/evmtrace.svg)](https://www.npmjs.com/package/evmtrace)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Trace and gas-profile EVM transactions from Node or the command line.
 
 `evmtrace` replays a transaction with `debug_traceTransaction`, rebuilds the
