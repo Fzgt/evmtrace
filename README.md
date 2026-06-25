@@ -1,7 +1,6 @@
 # evmtrace
 
 [![CI](https://github.com/Fzgt/evmtrace/actions/workflows/ci.yml/badge.svg)](https://github.com/Fzgt/evmtrace/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/evmtrace.svg)](https://www.npmjs.com/package/evmtrace)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Trace and gas-profile EVM transactions from Node or the command line.
@@ -26,13 +25,19 @@ storage accesses, and decoded revert reasons.
 
 ## Install
 
+> **Status:** evmtrace is not published to npm yet, so there is nothing to
+> `pnpm add` — install it from a checkout.
+
 ```bash
-pnpm add evmtrace
-# or: npm install evmtrace
+git clone https://github.com/Fzgt/evmtrace.git
+cd evmtrace
+pnpm install && pnpm build
+pnpm link --global   # then `evmtrace trace …` is on your PATH
 ```
 
-Requires Node 20+ and a node that exposes `debug_traceTransaction` — geth, reth,
-or a local [anvil](https://book.getfoundry.sh/anvil/).
+Requires Node 22.13+ (as declared in `engines`) and a node that exposes
+`debug_traceTransaction` — geth, reth, or a local
+[anvil](https://book.getfoundry.sh/anvil/).
 
 ## CLI
 
