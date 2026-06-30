@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 
-export const VERSION = '0.0.0';
+export const VERSION = '0.1.0';
 
 // ---- primitives ----
 export type { Address, Hex } from './hex';

@@ -1,6 +1,6 @@
 {
   "name": "evmtrace",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "EVM transaction tracer and gas profiler — replay a tx, decode the call tree, and see where the gas went",
   "keywords": [
     "ethereum",
